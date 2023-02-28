@@ -4,30 +4,29 @@
   <title>LifeJacket Simulator v2</title>
 </head>
 <body>
-  <video id="video" autoplay></video>
+    <video id="video" autoplay></video>
   <canvas id="canvas"></canvas>
   <script src="script.js"></script>
-
-
-
 </body>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.8.0/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.0.0/dist/coco-ssd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>  
+<script src="tensorflow/tf.min.js"></script>
+<script src="tensorflow/tfjs.js"></script> 
+<script src="tensorflow/coco-ssd.min.js"></script>
+<script src="tensorflow/coco-ssd.js"></script>
+
 <style>
     #video {
       position: absolute;
-      top: 0;
-      left: 0;
+      height: 100%;
+      object-fit: contain;
     }
-    
     #canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0.7;
+      height: 100%;
     }
-    
-    </style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+</style>
 </html>
