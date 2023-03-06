@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LifeJacket Simulator v2</title>
+  <style>
+    #video {
+      position: absolute;
+      height: 100%;
+      object-fit: contain;
+    }
+    #canvas {
+      position: absolute;
+      height: 100%;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" autoplay></video>
+  <canvas id="canvas"></canvas>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/data-uri-to-buffer/dist/index.js"></script>
+  <script type='module' src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+  <script type="module" src="https://unpkg.com/node-fetch"></script>
+  <script type="module" src="/legacy_script.js"></script>
+  <script type="module" src="/tensorflow/tf.min.js"></script>
+  <script src="/tensorflow/tfjs.js"></script> 
+  <script src="/tensorflow/coco-ssd.min.js"></script>
+  <script src="/tensorflow/coco-ssd.js"></script>
+
+</body>
+</html>

@@ -1,92 +1,53 @@
-// Get a reference to the video element
+// Set up the video stream and detector.
+const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
+  modelType: poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING
+});
 const video = document.getElementById('video');
-
-// Get a reference to the canvas element
-const canvas = document.getElementById('canvas');
-
-// Define an array of lifejacket image paths
-const lifejacketImages = [
-  'lifejacket.png',
-  'lifejacket2.png',
-  'lifejacket3.png'
-];
-
-// Load the COCO-SSD model
-async function loadModel() {
-  const model = await cocoSsd.load();
-  return model;
-}
-
-// Define a dictionary to store the lifejacket image for each person
-const personLifejackets = {};
-
-async function detectObjectsAndDraw(model) {
-  // Get the canvas context and draw the current video frame
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // Detect objects in the current video frame
-  const predictions = await model.detect(video);
-
-  // Loop over the detected objects
-  for (let i = 0; i < predictions.length; i++) {
-    // If the object is a person, draw a lifejacket on top of their torso
-    if (predictions[i].class === 'person') {
-      // Get the ID for this person
-      const personId = predictions[i].trackId;
-
-      // If we haven't seen this person before, choose a random lifejacket for them
-      if (!personLifejackets[personId]) {
-        const lifejacketOptions = ['lifejacket1.png', 'lifejacket2.png', 'lifejacket3.png'];
-        const randomIndex = Math.floor(Math.random() * lifejacketOptions.length);
-        personLifejackets[personId] = new Image();
-        personLifejackets[personId].src = lifejacketOptions[randomIndex];
-      }
-
-      // Get the coordinates of the bounding box around the person
-      const x = predictions[i].bbox[0];
-      const y = predictions[i].bbox[1];
-      const w = predictions[i].bbox[2];
-      const h = predictions[i].bbox[3];
-
-      // Calculate the coordinates of the torso region
-      const torsoY = y + h * 0.3;
-      const torsoH = h * 0.5;
-
-      // Draw the lifejacket on top of the torso region
-      const lifejacket = personLifejackets[personId];
-      ctx.globalAlpha = 1; // Set the opacity to 1 (fully opaque)
-      ctx.drawImage(lifejacket, x, torsoY, w, torsoH);
-    } else {
-      // If the object is not a person, remove any existing lifejacket for this person
-      const personId = predictions[i].trackId;
-      personLifejackets[personId] = undefined;
-    }
+const stream = await navigator.mediaDevices.getUserMedia({
+  'audio': false,
+  'video': {
+    facingMode: 'user',
+    width: { ideal: 640 },
+    height: { ideal: 480 }
   }
+});
+video.srcObject = stream;
+
+// Set up the canvas to display the keypoints and lines.
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// Load the lifejacket images.
+const lifejacketImgs = [
+  { src: '/lifejacket1.png', widthRatio: 1.2 },
+  { src: '/lifejacket2.png', widthRatio: 1.4 }
+];
+const loadedImages = [];
+for (const lifejacketImg of lifejacketImgs) {
+  const img = new Image();
+  img.src = lifejacketImg.src;
+  img.widthRatio = lifejacketImg.widthRatio;
+  loadedImages.push(img);
 }
 
-  
-
-// Start the video stream and detect objects in each frame
-async function run() {
-  // Get access to the camera
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  video.srcObject = stream;
-
-  // Wait for the video to start playing
-  await video.play();
-
-  // Set the canvas size to match the video dimensions
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  // Load the COCO-SSD model
-  const model = await loadModel();
-
-  // Detect objects and draw a random lifejacket in each frame of the video
-  setInterval(() => {
-    detectObjectsAndDraw(model);
-  }, 1000 / 30);
-}
-
-run();
+// Continuously estimate poses and update the display.
+setInterval(async () => {
+  const poses = await detector.estimatePoses(video);
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  poses.forEach((pose, i) => {
+    const leftShoulder = pose.keypoints[5];
+    const rightShoulder = pose.keypoints[6];
+    const leftHip = pose.keypoints[11];
+    const rightHip = pose.keypoints[12];
+    const bboxLeft = Math.min(leftShoulder.x, rightShoulder.x, leftHip.x, rightHip.x);
+    const bboxTop = Math.min(leftShoulder.y, rightShoulder.y, leftHip.y, rightHip.y);
+    const bboxWidth = Math.max(leftShoulder.x, rightShoulder.x, leftHip.x, rightHip.x) - bboxLeft;
+    const bboxHeight = Math.max(leftShoulder.y, rightShoulder.y, leftHip.y, rightHip.y) - bboxTop;
+    const lifejacketImg = loadedImages[i % loadedImages.length];
+    const lifejacketWidth = bboxWidth * lifejacketImg.widthRatio;
+    const lifejacketHeight = bboxHeight;
+    const x = bboxLeft * 0.98;
+    const y = bboxTop * 0.9;
+    ctx.drawImage(lifejacketImg, x, y, lifejacketWidth, lifejacketHeight);
+  });
+}, 100);

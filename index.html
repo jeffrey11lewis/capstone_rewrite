@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>LifeJacket Simulator v2</title>
-</head>
-<body>
-    <video id="video" autoplay></video>
-  <canvas id="canvas"></canvas>
-  <script src="script.js"></script>
-</body>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
-<script src="tensorflow/tf.min.js"></script>
-<script src="tensorflow/tfjs.js"></script> 
-<script src="tensorflow/coco-ssd.min.js"></script>
-<script src="tensorflow/coco-ssd.js"></script>
+  <head>
+    <meta charset="utf-8" />
+    <title>Movenet Multi-Pose Detection</title>
 
-<style>
-    #video {
+    <!-- Require the peer dependencies of pose-detection. -->
+<script src="\movenet_dependencies\tfjs-core.js"></script>
+<script src="\movenet_dependencies\tfjs-converter.js"></script>
+<script src="\movenet_dependencies\tfjs-backend-webgl.js"></script>
+<script src="\movenet_dependencies\pose-detection.js"></script>
+
+
+  </head>
+
+  <body>
+    <video id="video" width="640" height="480" autoplay muted></video>
+    
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <!-- Include your JavaScript file. -->
+    <script type="module" src="script.js"></script>
+    <style>
+#video {
       position: absolute;
       height: 100%;
       object-fit: contain;
@@ -23,12 +29,12 @@
     #canvas {
       position: absolute;
       height: 100%;
-      width: 100%
     }
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
     }
-</style>
+    </style>
+  </body>
 </html>

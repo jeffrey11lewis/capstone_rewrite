@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@tensorflow-models/posenet": "^2.2.2"
+    "@tensorflow-models/posenet": "^2.2.2",
+    "data-uri-to-buffer": "^4.0.1"
   }
 }
