@@ -19,8 +19,8 @@ const ctx = canvas.getContext('2d');
 
 // Load the lifejacket images.
 const lifejacketImgs = [
-  { src: '/lifejacket1.png', widthRatio: 1.2 },
-  { src: '/lifejacket2.png', widthRatio: 1.4 }
+  { src: '/lifejacket_photos/lifejacket1.png', widthRatio: 1.2 },
+  { src: '/lifejacket_photos/lifejacket2.png', widthRatio: 1.4 }
 ];
 const loadedImages = [];
 for (const lifejacketImg of lifejacketImgs) {
