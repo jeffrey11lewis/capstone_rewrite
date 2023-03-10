@@ -3,15 +3,18 @@ const detector = await poseDetection.createDetector(poseDetection.SupportedModel
   modelType: poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING
 });
 const video = document.getElementById('video');
-const stream = await navigator.mediaDevices.getUserMedia({
-  'audio': false,
-  'video': {
-    facingMode: 'user',
-    width: { ideal: 640 },
-    height: { ideal: 480 }
+
+// Get the list of available cameras and create options for selection
+const cameras = await navigator.mediaDevices.enumerateDevices();
+const cameraSelection = document.getElementById('cameraSelection');
+for (const camera of cameras) {
+  if (camera.kind === 'videoinput') {
+    const option = document.createElement('option');
+    option.value = camera.deviceId;
+    option.text = camera.label || `Camera ${cameraSelection.options.length + 1}`;
+    cameraSelection.appendChild(option);
   }
-});
-video.srcObject = stream;
+}
 
 // Set up the canvas to display the keypoints and lines.
 const canvas = document.getElementById('canvas');
@@ -29,6 +32,23 @@ for (const lifejacketImg of lifejacketImgs) {
   img.widthRatio = lifejacketImg.widthRatio;
   loadedImages.push(img);
 }
+
+// Set the default camera selection
+let selectedCamera = cameraSelection.value;
+
+// Update the selected camera and video source when the selection changes
+cameraSelection.addEventListener('change', async (event) => {
+  selectedCamera = event.target.value;
+  const stream = await navigator.mediaDevices.getUserMedia({
+    'audio': false,
+    'video': {
+      deviceId: selectedCamera,
+      width: { ideal: 640 },
+      height: { ideal: 480 }
+    }
+  });
+  video.srcObject = stream;
+});
 
 // Continuously estimate poses and update the display.
 setInterval(async () => {

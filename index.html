@@ -14,16 +14,21 @@
 
 
   </head>
-
+  <select id="cameraSelection">
+    <option value="user">SELECT CAMERA</option>
+  </select>
   <body>
     <video id="video" width="640" height="480" autoplay muted></video>
     
     <canvas id="canvas" width="640" height="480"></canvas>
+   
 
+    
     <!-- Include your JavaScript file. -->
     <script type="module" src="script.js"></script>
     <style>
 #video {
+      
       position: absolute;
       height: 100%;
       object-fit: contain;
@@ -37,6 +42,14 @@
       padding: 0;
       overflow: hidden;
     }
+  #camera
+  {
+    position: absolute ;
+  top: 10px !important;
+  right: 10px !important;
+  z-index: 10 !important;
+  }
     </style>
   </body>
+
 </html>
